@@ -1,4 +1,4 @@
-export PJDIR := /home/huyle/works/01_prj_ra/05_dev/pjnath/pjproject-2.4
+export PJDIR := /home/huyle/works/01_prj_ra/05_dev/pjnath_1/pjproject-2.4
 include $(PJDIR)/version.mak
 export PJ_DIR := $(PJDIR)
 

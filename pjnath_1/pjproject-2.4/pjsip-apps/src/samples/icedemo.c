@@ -946,7 +946,7 @@ static void icedemo_show_ice(void)
 
     if (fd_sdp)
     {
-        printf("[Me][Debug] buffer len: %d \n", strlen(buffer));
+        printf("[Me][Debug] buffer len: %d \n buffer: %s \n", strlen(buffer), buffer);
         fwrite(buffer, 1, strlen(buffer), fd_sdp);
         fflush(fd_sdp);
         fclose(fd_sdp);
@@ -1818,9 +1818,10 @@ static void icedemo_console(void)
     pj_bool_t app_quit = PJ_FALSE;
 
     icedemo_create_instance();
+    usleep(1*1000*1000);
     icedemo_init_session("o");
 
-    usleep(1000*1000);
+    usleep(4*1000*1000);
     icedemo_show_ice();
 
     peer_put_dsp(usrid, sdp);
