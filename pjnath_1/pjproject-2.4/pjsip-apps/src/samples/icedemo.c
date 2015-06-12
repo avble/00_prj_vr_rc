@@ -1818,9 +1818,10 @@ static void icedemo_console(void)
     pj_bool_t app_quit = PJ_FALSE;
 
     icedemo_create_instance();
+    usleep(1000*1000);
     icedemo_init_session("o");
 
-    usleep(1000*1000);
+    usleep(4*1000*1000);
     icedemo_show_ice();
 
     peer_put_dsp(usrid, sdp);
