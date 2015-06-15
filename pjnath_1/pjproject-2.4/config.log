@@ -3292,10 +3292,23 @@ aconfigure: failed program was:
 | }
 aconfigure:7707: result: no
 aconfigure:7713: checking for SSL_library_init in -lssl
+<<<<<<< HEAD
 aconfigure:7738: gcc -o conftest  -fPIC -DPJ_IS_BIG_ENDIAN=0 -DPJ_IS_LITTLE_ENDIAN=1   conftest.c -lssl  -lm -lrt -lpthread    >&5
 /usr/bin/ld: cannot find -lssl
 collect2: error: ld returned 1 exit status
 aconfigure:7738: $? = 1
+=======
+aconfigure:7738: gcc -o conftest  -fPIC -DPJ_IS_BIG_ENDIAN=0 -DPJ_IS_LITTLE_ENDIAN=1   conftest.c -lssl  -lcrypto -ldl -lz -luuid -lm -lrt -lpthread  -lasound   >&5
+aconfigure:7738: $? = 0
+aconfigure:7747: result: yes
+aconfigure:7754: result: OpenSSL library found, SSL support enabled
+aconfigure:7760: checking for SSLv2_method in -lssl
+aconfigure:7785: gcc -o conftest  -fPIC -DPJ_IS_BIG_ENDIAN=0 -DPJ_IS_LITTLE_ENDIAN=1   conftest.c -lssl  -lssl -lcrypto -ldl -lz -luuid -lm -lrt -lpthread  -lasound   >&5
+/tmp/ccfiMmFE.o: In function `main':
+conftest.c:(.text+0xa): undefined reference to `SSLv2_method'
+collect2: ld returned 1 exit status
+aconfigure:7785: $? = 1
+>>>>>>> 1263cb11be1dc6ccc13e38b632dc99b3aaa1b3e7
 aconfigure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME "pjproject"
@@ -4802,7 +4815,11 @@ ac_os_objs='ioqueue_select.o file_access_unistd.o file_io_ansi.o os_core_unix.o 
 ac_pa_cflags=' -DHAVE_SYS_SOUNDCARD_H -DHAVE_LINUX_SOUNDCARD_H -DPA_LITTLE_ENDIAN'
 ac_pa_use_alsa='0'
 ac_pa_use_oss='1'
+<<<<<<< HEAD
 ac_pjdir='/home/huy/work/verik/00_prj_ra/05_dev/pjnath_1/pjproject-2.4'
+=======
+ac_pjdir='/home/huyle/works/01_prj_ra/05_dev/pjnath_1/pjproject-2.4'
+>>>>>>> 1263cb11be1dc6ccc13e38b632dc99b3aaa1b3e7
 ac_pjmedia_audiodev_objs=''
 ac_pjmedia_resample='libresample'
 ac_pjmedia_snd='pa_unix'

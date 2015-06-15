@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 export PJDIR := /home/huy/work/verik/00_prj_ra/05_dev/pjnath_1/pjproject-2.4
+=======
+export PJDIR := /home/huyle/works/01_prj_ra/05_dev/pjnath_1/pjproject-2.4
+>>>>>>> 1263cb11be1dc6ccc13e38b632dc99b3aaa1b3e7
 include $(PJDIR)/version.mak
 export PJ_DIR := $(PJDIR)
 

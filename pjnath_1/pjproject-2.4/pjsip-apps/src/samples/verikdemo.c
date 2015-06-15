@@ -1,21 +1,3 @@
-/* $Id: icedemo.c 4624 2013-10-21 06:37:30Z ming $ */
-/* 
- * Copyright (C) 2008-2011 Teluu Inc. (http://www.teluu.com)
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- */
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -38,7 +20,7 @@
 
 
 
-#define THIS_FILE   "icedemo.c"
+#define THIS_FILE   "verikdemo.c"
 
 /* For this demo app, configure longer STUN keep-alive time
  * so that it does't clutter the screen output.
@@ -50,193 +32,6 @@ char usrid[256];
 char host_name[256];
 int portno;
 char sdp[1024];
-
-
-struct my_struct
-{
-    char *msg;
-    struct my_struct* next;
-};
-
-
-struct my_list
-{
-    struct my_struct* head;
-    struct my_struct* tail;
-};
-
-
-struct my_list* list_add_element( struct my_list*, const char *);
-struct my_list* list_remove_element( struct my_list*);
-
-
-struct my_list* list_new(void);
-struct my_list* list_free( struct my_list* );
-
-void list_print( const struct my_list* );
-void list_print_element(const struct my_struct* );
-
-#if 0
-
-int main(void)
-{
-    struct my_list*  mt = NULL;
-
-    mt = list_new();
-    list_add_element(mt, 1);
-    list_add_element(mt, 2);
-    list_add_element(mt, 3);
-    list_add_element(mt, 4);
-
-    list_print(mt);
-
-    list_remove_element(mt);
-    list_print(mt);
-
-    list_free(mt);   /* always remember to free() the malloc()ed memory */
-    free(mt);        /* free() if list is kept separate from free()ing the structure, I think its a good design */
-    mt = NULL;      /* after free() always set that pointer to NULL, C will run havon on you if you try to use a dangling pointer */
-
-    list_print(mt);
-
-    return 0;
-}
-#endif
-
-
-/* Will always return the pointer to my_list */
-struct my_list* list_add_element(struct my_list* s, const char *msg)
-{
-    struct my_struct* p = malloc( 1 * sizeof(*p) );
-
-    if( NULL == p )
-    {
-        fprintf(stderr, "IN %s, %s: malloc() failed\n", __FILE__, "list_add");
-        return s;
-    }
-
-    p->msg = (char *) malloc(strlen(msg));
-    strcpy(p->msg, msg);
-    p->next = NULL;
-
-
-    if( NULL == s )
-    {
-        printf("Queue not initialized\n");
-        free(p);
-        return s;
-    }
-    else if( NULL == s->head && NULL == s->tail )
-    {
-        /* printf("Empty list, adding p->num: %d\n\n", p->num);  */
-        s->head = s->tail = p;
-        return s;
-    }
-    else if( NULL == s->head || NULL == s->tail )
-    {
-        fprintf(stderr, "There is something seriously wrong with your assignment of head/tail to the list\n");
-        free(p);
-        return NULL;
-    }
-    else
-    {
-        /* printf("List not empty, adding element to tail\n"); */
-        s->tail->next = p;
-        s->tail = p;
-    }
-
-    return s;
-}
-
-
-/* This is a queue and it is FIFO, so we will always remove the first element */
-struct my_list* list_remove_element( struct my_list* s )
-{
-    struct my_struct* h = NULL;
-    struct my_struct* p = NULL;
-
-    if( NULL == s )
-    {
-        printf("List is empty\n");
-        return s;
-    }
-    else if( NULL == s->head && NULL == s->tail )
-    {
-        printf("Well, List is empty\n");
-        return s;
-    }
-    else if( NULL == s->head || NULL == s->tail )
-    {
-        printf("There is something seriously wrong with your list\n");
-        printf("One of the head/tail is empty while other is not \n");
-        return s;
-    }
-
-    h = s->head;
-    p = h->next;
-    free(h->msg);
-    free(h);
-    s->head = p;
-    if( NULL == s->head )  s->tail = s->head;   /* The element tail was pointing to is free(), so we need an update */
-
-    return s;
-}
-
-
-/* ---------------------- small helper fucntions ---------------------------------- */
-struct my_list* list_free( struct my_list* s )
-{
-    while( s->head )
-    {
-        list_remove_element(s);
-    }
-
-    return s;
-}
-
-struct my_list* list_new(void)
-{
-    struct my_list* p = malloc( 1 * sizeof(*p));
-
-    if( NULL == p )
-    {
-        fprintf(stderr, "LINE: %d, malloc() failed\n", __LINE__);
-    }
-
-    p->head = p->tail = NULL;
-
-    return p;
-}
-
-
-void list_print( const struct my_list* ps )
-{
-    struct my_struct* p = NULL;
-
-    if( ps )
-    {
-        for( p = ps->head; p; p = p->next )
-        {
-            list_print_element(p);
-        }
-    }
-
-    printf("------------------\n");
-}
-
-
-void list_print_element(const struct my_struct* p )
-{
-    if( p )
-    {
-        printf("msg = %s\n", p->msg);
-    }
-    else
-    {
-        printf("Can not print NULL struct \n");
-    }
-}
-
 
 
 
@@ -1506,39 +1301,6 @@ static void icedemo_send_data(unsigned comp_id, const char *data)
 }
 
 
-/*
- * Display help for the menu.
- */
-static void icedemo_help_menu(void)
-{
-    puts("");
-    puts("-= Help on using ICE and this icedemo program =-");
-    puts("");
-    puts("This application demonstrates how to use ICE in pjnath without having\n"
-         "to use the SIP protocol. To use this application, you will need to run\n"
-         "two instances of this application, to simulate two ICE agents.\n");
-
-    puts("Basic ICE flow:\n"
-         " create instance [menu \"c\"]\n"
-         " repeat these steps as wanted:\n"
-         "   - init session as offerer or answerer [menu \"i\"]\n"
-         "   - display our SDP [menu \"s\"]\n"
-         "   - \"send\" our SDP from the \"show\" output above to remote, by\n"
-         "     copy-pasting the SDP to the other icedemo application\n"
-         "   - parse remote SDP, by pasting SDP generated by the other icedemo\n"
-         "     instance [menu \"r\"]\n"
-         "   - begin ICE negotiation in our end [menu \"b\"], and \n"
-         "   - immediately begin ICE negotiation in the other icedemo instance\n"
-         "   - ICE negotiation will run, and result will be printed to screen\n"
-         "   - send application data to remote [menu \"x\"]\n"
-         "   - end/stop ICE session [menu \"e\"]\n"
-         " destroy instance [menu \"d\"]\n"
-         "");
-
-    puts("");
-    puts("This concludes the help screen.");
-    puts("");
-}
 
 
 /*
@@ -1553,16 +1315,6 @@ static void icedemo_print_menu(void)
     puts("+---+------------------------------------------------------------------+");
     puts("| l | list           List all user id                                |");
     puts("| s | start          start conversation with an userid                            |");
-#if 0
-    puts("| c | create           Create the instance                             |");
-    puts("| d | destroy          Destroy the instance                            |");
-    puts("| i | init o|a         Initialize ICE session as offerer or answerer   |");
-    puts("| e | stop             End/stop ICE session                            |");
-    puts("| s | show             Display local ICE info                          |");
-    puts("| r | remote           Input remote ICE info                           |");
-    puts("| b | start            Begin ICE negotiation                           |");
-    puts("| x | send <compid> .. Send data to remote                             |");
-#endif
     puts("+---+------------------------------------------------------------------+");
     puts("| h |  help            * Help! *                                       |");
     puts("| q |  quit            Quit                                            |");
@@ -1716,7 +1468,7 @@ static int peer_get_dsps()
     while (fgets(usr, 256, file) != NULL)
     {
         if (strncmp(usr, "USER=", 5) == 0)
-            printf("%s\n", usr);
+            printf("%s", usr);
     }
 
     if (file != NULL)
@@ -1854,16 +1606,13 @@ static void icedemo_console(void)
         }else if (strcmp(cmd, "start")==0 || strcmp(cmd, "s") == 0)
         {
 
-            printf("user: ");
+            printf("Which user: ");
             char _usr_id[256];
             char _usr_sdp[1024];
 
             gets(_usr_id);
 
             peer_get_dsp(_usr_id, _usr_sdp);
-
-
-
 
             // start conversation with an user
             icedemo_input_remote2(_usr_id);
@@ -1980,6 +1729,7 @@ static void icedemo_usage()
     puts(" --turn-tcp, -T            Use TCP to connect to TURN server");
     puts(" --turn-username, -u UID   Set TURN username of the credential to UID");
     puts(" --turn-password, -p PWD   Set password of the credential to WPWD");
+    puts("Signalling Server related options:");
     puts(" --usrid, -U usrid    user id ");
     puts(" --signalling, -S    Signalling server");
     puts(" --signalling-port, -P    Use fingerprint for outgoing TURN requests");
@@ -2015,9 +1765,6 @@ int main(int argc, char *argv[])
 };
     int c, opt_id;
 
-    struct my_list*  msgs = NULL;
-
-    msgs = list_new();
 
 
     strcpy(usrid, "userid");
@@ -2094,7 +1841,7 @@ int main(int argc, char *argv[])
         }
     }
 
-    printf("[Debug] %s, %d \n", __FILE__, __LINE__);
+    //printf("[Debug] %s, %d \n", __FILE__, __LINE__);
 
     status = icedemo_init();
     if (status != PJ_SUCCESS)
@@ -2103,9 +1850,6 @@ int main(int argc, char *argv[])
     icedemo_console();
 
     err_exit("Quitting..", PJ_SUCCESS);
-    list_free(msgs);   /* always remember to free() the malloc()ed memory */
-    free(msgs);        /* free() if list is kept separate from free()ing the structure, I think its a good design */
-    msgs = NULL;      /* after free() always set that pointer to NULL, C will run havon on you if you try to use a dangling pointer */
 
     return 0;
 }

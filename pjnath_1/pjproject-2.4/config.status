@@ -433,7 +433,11 @@ Copyright (C) 2012 Free Software Foundation, Inc.
 This config.status script is free software; the Free Software Foundation
 gives unlimited permission to copy, distribute and modify it."
 
+<<<<<<< HEAD
 ac_pwd='/home/huy/work/verik/00_prj_ra/05_dev/pjnath_1/pjproject-2.4'
+=======
+ac_pwd='/home/huyle/works/01_prj_ra/05_dev/pjnath_1/pjproject-2.4'
+>>>>>>> 1263cb11be1dc6ccc13e38b632dc99b3aaa1b3e7
 srcdir='.'
 test -n "$AWK" || AWK=awk
 # The default lists apply if the user does not specify any file.
@@ -684,7 +688,11 @@ S["CPP"]="gcc -E"
 S["ac_cross_compile"]=""
 S["ac_shlib_suffix"]="so"
 S["ac_build_mak_vars"]=""
+<<<<<<< HEAD
 S["ac_pjdir"]="/home/huy/work/verik/00_prj_ra/05_dev/pjnath_1/pjproject-2.4"
+=======
+S["ac_pjdir"]="/home/huyle/works/01_prj_ra/05_dev/pjnath_1/pjproject-2.4"
+>>>>>>> 1263cb11be1dc6ccc13e38b632dc99b3aaa1b3e7
 S["CC_CFLAGS"]="-Wall"
 S["CC_OPTIMIZE"]="-O2"
 S["CC_DEF"]="-D"
