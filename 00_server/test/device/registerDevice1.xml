@@ -2,7 +2,7 @@
 <deviceRegister>
   <device>
     <deviceId/>
-    <uniqueId>device1</uniqueId>
+    <uniqueId>device2</uniqueId>
     <modelCode>Sensor</modelCode>
     <home>
       <description>Test Home</description>

@@ -1,6 +1,7 @@
 from flask import Flask
 from flask import request
 import device
+import os, sys 
 
 app = Flask(__name__)
 
@@ -14,20 +15,31 @@ def helloworld():
 	return 'hello world' 
 
 @app.route('/device/registerDevice', methods = ['POST'])
-def device_register():
+def uri_device_register():
 	if device.device_register(request.data) != 0:
         	return 'register device fail \n', 201
 	else: 
 		return 'register device successful \n' 
 
 @app.route('/device/getDevice', methods = ['GET'])
-def device_get():
+def uri_device_get():
 	return 'register device' 
 
-@app.route('/device/resetDevice', methods = ['POST'])
-def device_reset():
+@app.route('/device/resetDevice/<uniqueId>', methods = ['POST'])
+def uri_device_reset(uniqueId):
+	#return 'reset device successfully'
 	# show the post with the given id, the id is an integer
-	return 'reset device' 
+	if device.device_reset(uniqueId) == 0:
+		return 'reset device successfully'
+	else:
+		return 'reset device fail'
+
+
+@app.route('/device/getDevicesFromNetwork/<NetworkID>', methods = ['GET'])
+def uri_device_get_devices_from_network(NetworkID):
+	return device.device_get_device_from_networkid(NetworkID)
+
+
 
 if __name__ == '__main__':
 	app.debug = True
