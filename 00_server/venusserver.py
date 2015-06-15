@@ -7,13 +7,13 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return 'index page' 
+    return 'index page\n' 
 
 @app.route('/helloworld', methods = ['POST', 'GET'])
 def helloworld():
-    return 'hello world' 
+    return 'hello world\n' 
 
-@app.route('/device/registerDevice', methods = ['POST']
+@app.route('/device/registerDevice', methods = ['POST'])
 def device_register():
     return 'register device' 
 
