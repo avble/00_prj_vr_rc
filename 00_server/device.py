@@ -44,6 +44,23 @@ def _device_get_deviceid_from_file(device_file):
 					device_id = e_device.text
 	return device_id 
 
+# description: 
+# return the registered xml 
+
+def device_get_device_from_file(device_file):
+	if  _device_get_deviceid_from_file(device_file) != None:
+		file = open(device_file, 'r')
+		registered_xml = ''
+		while 1:
+			line = file.readline()
+			if not line:
+				break
+			registered_xml += line 
+		file.close()
+		return registered_xml
+	else:
+		return None
+		
 
 
 def device_reset(device_id):
@@ -53,12 +70,20 @@ def device_reset(device_id):
 		return 0
 	return -1 
 
+def device_getDevice(device_id):
+	path = "./database/devices/" + device_id + ".xml"
+	device = device_get_device_from_file(path)
+	if device != None:
+		return device
+	else: 
+		return "No device exist", 401	
 
 # return 
 # -1: error 
 #  0: successful 
 def device_register(device):
 	# save device information as xml 
+	print "[Debug] device_register" , device
 	device_id = _device_get_device_id(device)
 	if device_id == None:
 		return -1;
