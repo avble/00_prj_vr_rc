@@ -1,6 +1,6 @@
 from flask import Flask
 from flask import request
-import device
+import device, peer
 import os, sys 
 
 app = Flask(__name__)
@@ -41,6 +41,16 @@ def uri_device_get_devices_from_network(NetworkID):
 
 
 
+##### peer service #################
+@app.route('/peer/registerPeer', methods = ['POST'])
+def uri_device_peer():
+	if peer.device_peer(request.data) != 0:
+        	return 'register device fail \n', 201
+	else: 
+		return 'register device successful \n' 
+
+
+
 if __name__ == '__main__':
 	app.debug = True
-	app.run(host = '0.0.0.0')
+	app.run(host = '0.0.0.0', port = 5001)
