@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <deviceRegister>
   <device>
-    <deviceId/>
     <uniqueId>device1</uniqueId>
     <modelCode>Sensor</modelCode>
     <home>
