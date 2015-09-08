@@ -111,12 +111,9 @@ void set_allocation_valid(allocation* a, int value) {
 }
 
 turn_permission_info* allocation_get_permission(allocation* a, const ioa_addr *addr) {
-	printf("DEBUG %s, %d \n", __FUNCTION__, __LINE__);
   if(a) {
-	printf("DEBUG %s, %d \n", __FUNCTION__, __LINE__);
     return get_from_turn_permission_hashtable(&(a->addr_to_perm), addr);
   }
-	printf("DEBUG %s, %d \n", __FUNCTION__, __LINE__);
   return NULL;
 }
 
@@ -194,13 +191,9 @@ static turn_permission_info* get_from_turn_permission_hashtable(turn_permission_
 	if (!addr || !map)
 		return NULL;
 
-	printf("DEBUG %s, %d \n", __FUNCTION__, __LINE__);
-
 	u32bits index = addr_hash_no_port(addr) & (TURN_PERMISSION_HASHTABLE_SIZE-1);
-	printf("DEBUG %s, %d \n", __FUNCTION__, __LINE__);
 	turn_permission_array *parray = &(map->table[index]);
 
-	printf("DEBUG %s, %d \n", __FUNCTION__, __LINE__);
 	{
 		size_t i;
 		for (i = 0; i < TURN_PERMISSION_ARRAY_SIZE; ++i) {

@@ -2197,7 +2197,6 @@ static int handle_turn_channel_bind(turn_turnserver *server,
 				    ioa_net_data *in_buffer, ioa_network_buffer_handle nbh) {
 
 	FUNCSTART;
-	printf("DEBUG %s, %d \n", __FUNCTION__ , __LINE__);
 	u16bits chnum = 0;
 	ioa_addr peer_addr;
 	addr_set_any(&peer_addr);
@@ -2236,17 +2235,6 @@ static int handle_turn_channel_bind(turn_turnserver *server,
 						       ioa_network_buffer_get_size(in_buffer->nbh), 
 						       sar, &peer_addr,
 						       &(ss->default_peer_addr));
-
-struct sockaddr_in *tmp  = ( struct sockaddr_in *)&peer_addr; 
-unsigned char *ip = (unsigned char *)tmp->sin_addr.s_addr;
-	printf("DEBUG %s, %d \n", __FILE__, __LINE__);
-struct sockaddr_in *ipv4 = (struct sockaddr_in *)&peer_addr;
-char ipAddress[100];
-inet_ntop(AF_INET, &(ipv4->sin_addr), ipAddress, 100);
-
-printf("DEBUG %s, %d The IP address is: %s\n", __FUNCTION__, __LINE__, ipAddress);
-//#printf("DEBUG src address: %d %d %d %d \n", ip[0], ip[1], ip[2], ip[3]);
-printf("DEBUG %s, %d dst port: %d \n", __FUNCTION__, __LINE__,  ((struct sockaddr_in*)&peer_addr)->sin_port);
 
 				ioa_addr *relay_addr = get_local_addr_from_ioa_socket(a->relay_session.s);
 
@@ -2585,29 +2573,22 @@ static int handle_turn_send(turn_turnserver *server, ts_ur_super_session *ss,
 			    int *err_code, const u08bits **reason, u16bits *unknown_attrs, u16bits *ua_num,
 			    ioa_net_data *in_buffer) {
 
-	printf("DEBUG %s, %d \n", __FILE__, __LINE__);
 	FUNCSTART;
 
-	printf("DEBUG %s, %d \n", __FILE__, __LINE__);
 	ioa_addr peer_addr;
 	const u08bits* value = NULL;
 	int len = -1;
 	int addr_found = 0;
 	int set_df = 0;
 
-	printf("DEBUG %s, %d \n", __FILE__, __LINE__);
 	addr_set_any(&peer_addr);
-	printf("DEBUG %s, %d \n", __FILE__, __LINE__);
 	allocation* a = get_allocation_ss(ss);
 
-	printf("DEBUG %s, %d \n", __FILE__, __LINE__);
 	if(ss->is_tcp_relay) {
-	printf("DEBUG %s, %d \n", __FILE__, __LINE__);
 		*err_code = 403;
 		*reason = (const u08bits *)"Send cannot be used with TCP relay";
 	} else if (is_allocation_valid(a) && (in_buffer->recv_ttl != 0)) {
 
-	printf("DEBUG %s, %d \n", __FILE__, __LINE__);
 		stun_attr_ref sar = stun_attr_get_first_str(ioa_network_buffer_data(in_buffer->nbh), 
 							    ioa_network_buffer_get_size(in_buffer->nbh));
 		while (sar && (!(*err_code)) && (*ua_num < MAX_NUMBER_OF_UNKNOWN_ATTRS)) {
@@ -2621,12 +2602,10 @@ static int handle_turn_send(turn_turnserver *server, ts_ur_super_session *ss,
 					set_df = 1;
 				break;
 			case STUN_ATTRIBUTE_XOR_PEER_ADDRESS: {
-	printf("DEBUG %s, %d \n", __FILE__, __LINE__);
 				if (addr_found) {
 					*err_code = 400;
 					*reason = (const u08bits *)"Address duplication";
 				} else {
-	printf("DEBUG %s, %d \n", __FILE__, __LINE__);
 					stun_attr_get_addr_str(ioa_network_buffer_data(in_buffer->nbh), 
 							       ioa_network_buffer_get_size(in_buffer->nbh),
 							       sar, &peer_addr,
@@ -2635,7 +2614,6 @@ static int handle_turn_send(turn_turnserver *server, ts_ur_super_session *ss,
 			}
 				break;
 			case STUN_ATTRIBUTE_DATA: {
-	printf("DEBUG %s, %d \n", __FILE__, __LINE__);
 				if (len >= 0) {
 					*err_code = 400;
 					*reason = (const u08bits *)"Data duplication";
@@ -2660,52 +2638,31 @@ static int handle_turn_send(turn_turnserver *server, ts_ur_super_session *ss,
 
 			*err_code = 420;
 
-	printf("DEBUG %s, %d \n", __FILE__, __LINE__);
 		} else if (!addr_any(&peer_addr) && len >= 0) {
 
-	printf("DEBUG %s, %d \n", __FILE__, __LINE__);
 			turn_permission_info* tinfo = NULL;
 
-	printf("DEBUG %s, %d \n", __FILE__, __LINE__);
 			if(!(server->server_relay))
 				tinfo = allocation_get_permission(a, &peer_addr);
 
-struct sockaddr_in *tmp  = ( struct sockaddr_in *)&peer_addr; 
-unsigned char *ip = (unsigned char *)tmp->sin_addr.s_addr;
-	printf("DEBUG %s, %d \n", __FILE__, __LINE__);
-struct sockaddr_in *ipv4 = (struct sockaddr_in *)&peer_addr;
-char ipAddress[100];
-inet_ntop(AF_INET, &(ipv4->sin_addr), ipAddress, 100);
-
-printf("The IP address is: %s\n", ipAddress);
-//#printf("DEBUG src address: %d %d %d %d \n", ip[0], ip[1], ip[2], ip[3]);
-printf("DEBUG dst port: %d \n",  ((struct sockaddr_in*)&peer_addr)->sin_port);
-	printf("DEBUG %s, %d \n", __FILE__, __LINE__);
 			if (tinfo || (server->server_relay)) {
 
-	printf("DEBUG %s, %d \n", __FILE__, __LINE__);
 				set_df_on_ioa_socket(get_relay_socket_ss(ss), set_df);
 
-	printf("DEBUG %s, %d \n", __FILE__, __LINE__);
 				ioa_network_buffer_handle nbh = in_buffer->nbh;
 				if(value && len>0) {
-	printf("DEBUG %s, %d \n", __FILE__, __LINE__);
 					u16bits offset = (u16bits)(value - ioa_network_buffer_data(nbh));
 					ioa_network_buffer_add_offset_size(nbh,offset,0,len);
 				} else {
-	printf("DEBUG %s, %d \n", __FILE__, __LINE__);
 					len = 0;
 					ioa_network_buffer_set_size(nbh,len);
 				}
-	printf("DEBUG %s, %d \n", __FILE__, __LINE__);
 				ioa_network_buffer_header_init(nbh);
 				send_data_from_ioa_socket_nbh(get_relay_socket_ss(ss), &peer_addr, nbh, in_buffer->recv_ttl-1, in_buffer->recv_tos);
-	printf("DEBUG %s, %d \n", __FILE__, __LINE__);
 				in_buffer->nbh = NULL;
 			}
 
 		} else {
-	printf("DEBUG %s, %d \n", __FILE__, __LINE__);
 			*err_code = 400;
 			*reason = (const u08bits *)"No address found";
 		}
@@ -3219,7 +3176,6 @@ static void set_alternate_server(turn_server_addrs_list_t *asl, const ioa_addr *
 static int handle_turn_command(turn_turnserver *server, ts_ur_super_session *ss, ioa_net_data *in_buffer, ioa_network_buffer_handle nbh, int *resp_constructed, int can_resume)
 {
 
-	printf("DEBUG %s, %d \n", __FUNCTION__, __LINE__);
 	stun_tid tid;
 	int err_code = 0;
 	const u08bits *reason = NULL;
@@ -3229,7 +3185,6 @@ static int handle_turn_command(turn_turnserver *server, ts_ur_super_session *ss,
 	if(!(ss->client_session.s))
 		return -1;
 
-	printf("DEBUG %s, %d \n", __FUNCTION__, __LINE__);
 	u16bits unknown_attrs[MAX_NUMBER_OF_UNKNOWN_ATTRS];
 	u16bits ua_num = 0;
 	u16bits method = stun_get_method_str(ioa_network_buffer_data(in_buffer->nbh), 
@@ -3241,7 +3196,6 @@ static int handle_turn_command(turn_turnserver *server, ts_ur_super_session *ss,
 				  ioa_network_buffer_get_size(in_buffer->nbh), 
 				  &tid);
 
-	printf("DEBUG %s, %d \n", __FUNCTION__, __LINE__);
 	if (stun_is_request_str(ioa_network_buffer_data(in_buffer->nbh), 
 				ioa_network_buffer_get_size(in_buffer->nbh))) {
 
@@ -3383,12 +3337,10 @@ static int handle_turn_command(turn_turnserver *server, ts_ur_super_session *ss,
 			case STUN_METHOD_BINDING:
 
 			{
-	printf("DEBUG %s, %d \n", __FUNCTION__, __LINE__);
 				int origin_changed=0;
 				ioa_addr response_origin;
 				int dest_changed=0;
 				ioa_addr response_destination;
-	printf("DEBUG %s, %d \n", __FUNCTION__, __LINE__);
 
 				handle_turn_binding(server, ss, &tid, resp_constructed, &err_code, &reason,
 							unknown_attrs, &ua_num, in_buffer, nbh,
@@ -3429,31 +3381,24 @@ static int handle_turn_command(turn_turnserver *server, ts_ur_super_session *ss,
 	} else if (stun_is_indication_str(ioa_network_buffer_data(in_buffer->nbh), 
 					  ioa_network_buffer_get_size(in_buffer->nbh))) {
 
-	printf("DEBUG %s, %d \n", __FUNCTION__, __LINE__);
 		no_response = 1;
 		int postpone = 0;
 
 		if(server->ct == TURN_CREDENTIALS_SHORT_TERM) {
-	printf("DEBUG %s, %d \n", __FUNCTION__, __LINE__);
 			check_stun_auth(server, ss, &tid, resp_constructed, &err_code, &reason, in_buffer, nbh, method, &message_integrity, &postpone, can_resume);
 		}
-	printf("DEBUG %s, %d \n", __FUNCTION__, __LINE__);
 
 		if (!postpone && !err_code) {
 
-	printf("DEBUG %s, %d \n", __FUNCTION__, __LINE__);
 			switch (method){
 
 			case STUN_METHOD_BINDING:
-	printf("DEBUG %s, %d \n", __FUNCTION__, __LINE__);
 				//ICE ?
 				break;
 
 			case STUN_METHOD_SEND:
 
-	printf("DEBUG %s, %d \n", __FILE__, __LINE__);
 				handle_turn_send(server, ss, &err_code, &reason, unknown_attrs, &ua_num, in_buffer);
-	printf("DEBUG %s, %d \n", __FILE__, __LINE__);
 
 				if(eve(server->verbose)) {
 				  log_method(ss, ss->username, "SEND", err_code, reason);
@@ -3464,13 +3409,11 @@ static int handle_turn_command(turn_turnserver *server, ts_ur_super_session *ss,
 			case STUN_METHOD_DATA:
 
 				err_code = 403;
-	printf("DEBUG %s, %d \n", __FILE__, __LINE__);
 
 				if(eve(server->verbose)) {
 				  log_method(ss, ss->username, "DATA", err_code, reason);
 				}
 
-	printf("DEBUG %s, %d \n", __FILE__, __LINE__);
 				break;
 
 			default:

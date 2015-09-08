@@ -2890,20 +2890,16 @@ int udp_send(ioa_socket_handle s, const ioa_addr* dest_addr, const s08bits* buff
 	int rc = 0;
 	evutil_socket_t fd = -1;
 
-	printf("DEBUG %s, %d \n", __FILE__, __LINE__);
 	if(!s)
 		return -1;
 
-	printf("DEBUG %s, %d \n", __FILE__, __LINE__);
 	if(s->parent_s)
 		fd = s->parent_s->fd;
 	else
 		fd = s->fd;
 
-	printf("DEBUG %s, %d \n", __FILE__, __LINE__);
 	if(fd>=0) {
 
-	printf("DEBUG %s, %d \n", __FILE__, __LINE__);
 		int try_again = 1;
 
 		int cycle;
@@ -2916,39 +2912,19 @@ int udp_send(ioa_socket_handle s, const ioa_addr* dest_addr, const s08bits* buff
 
 		cycle = 0;
 
-	printf("DEBUG %s, %d \n", __FILE__, __LINE__);
 		if (dest_addr) {
 
-	printf("DEBUG %s, %d \n", __FILE__, __LINE__);
 			int slen = get_ioa_addr_len(dest_addr);
 
-	printf("DEBUG %s, %d \n", __FILE__, __LINE__);
 			do {
-
-		
-struct sockaddr_in *tmp  = ( struct sockaddr_in *)dest_addr; 
-unsigned char *ip = (unsigned char *)tmp->sin_addr.s_addr;
-	printf("DEBUG %s, %d \n", __FILE__, __LINE__);
-struct sockaddr_in *ipv4 = (struct sockaddr_in *)dest_addr;
-char ipAddress[100];
-inet_ntop(AF_INET, &(ipv4->sin_addr), ipAddress, 100);
-
-printf("DEBUG %s, %d, The IP address is: %s\n", __FUNCTION__, __LINE__, ipAddress);
-//#printf("DEBUG src address: %d %d %d %d \n", ip[0], ip[1], ip[2], ip[3]);
-printf("DEBUG %s, %d  dst port: %d \n", __FUNCTION__, __LINE__,  ((struct sockaddr_in*)dest_addr)->sin_port);
-	
 				rc = sendto(fd, buffer, len, 0, (const struct sockaddr*) dest_addr, (socklen_t) slen);
-				if (rc < 0)	
-					printf("DEBUG ERROR sending %s, %d \n", __FILE__, __LINE__);
 			} while (
 					((rc < 0) && (errno == EINTR)) ||
 					((rc<0) && is_connreset() && (++cycle<TRIAL_EFFORTS_TO_SEND))
 					);
 
 		} else {
-	printf("DEBUG %s, %d \n", __FILE__, __LINE__);
 			do {
-	printf("DEBUG %s, %d \n", __FILE__, __LINE__);
 				rc = send(fd, buffer, len, 0);
 			} while (
 					((rc < 0) && (errno == EINTR)) ||
@@ -2973,7 +2949,6 @@ printf("DEBUG %s, %d  dst port: %d \n", __FUNCTION__, __LINE__,  ((struct sockad
 		}
 	}
 
-	printf("DEBUG %s, %d \n", __FILE__, __LINE__);
 	return rc;
 }
 
@@ -2983,15 +2958,12 @@ int send_data_from_ioa_socket_nbh(ioa_socket_handle s, ioa_addr* dest_addr,
 {
 	int ret = -1;
 
-	printf("DEBUG %s, %d \n", __FUNCTION__, __LINE__);
 	if(!s) {
-	printf("DEBUG %s, %d \n", __FUNCTION__, __LINE__);
 		ioa_network_buffer_delete(NULL, nbh);
 		return -1;
 	}
 
 	if (s->done || (s->fd == -1)) {
-	printf("DEBUG %s, %d \n", __FUNCTION__, __LINE__);
 		TURN_LOG_FUNC(
 				TURN_LOG_LEVEL_INFO,
 				"!!! %s: (1) Trying to send data from closed socket: 0x%lx (1): done=%d, fd=%d, st=%d, sat=%d\n",
@@ -3000,29 +2972,21 @@ int send_data_from_ioa_socket_nbh(ioa_socket_handle s, ioa_addr* dest_addr,
 		TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "!!! %s socket: 0x%lx was closed\n", __FUNCTION__,(long)s);
 
 	} else if (nbh) {
-	printf("DEBUG %s, %d \n", __FUNCTION__, __LINE__);
 		if(!ioa_socket_check_bandwidth(s,nbh,0)) {
-	printf("DEBUG %s, %d \n", __FUNCTION__, __LINE__);
 			/* Bandwidth exhausted, we pretend everything is fine: */
 			ret = (int)(ioa_network_buffer_get_size(nbh));
 		} else {
-	printf("DEBUG %s, %d \n", __FUNCTION__, __LINE__);
 			if (!ioa_socket_tobeclosed(s) && s->e) {
-	printf("DEBUG %s, %d \n", __FUNCTION__, __LINE__);
 
 				if (!(s->done || (s->fd == -1))) {
-	printf("DEBUG %s, %d \n", __FUNCTION__, __LINE__);
 					set_socket_ttl(s, ttl);
 					set_socket_tos(s, tos);
 
 					if (s->connected && s->bev) {
-	printf("DEBUG %s, %d \n", __FUNCTION__, __LINE__);
 						if (s->st == TLS_SOCKET) {
-	printf("DEBUG %s, %d \n", __FUNCTION__, __LINE__);
 #if !defined(TURN_NO_TLS)
 							SSL *ctx = bufferevent_openssl_get_ssl(s->bev);
 							if (!ctx || SSL_get_shutdown(ctx)) {
-	printf("DEBUG %s, %d \n", __FUNCTION__, __LINE__);
 								s->tobeclosed = 1;
 								ret = 0;
 							}
@@ -3031,17 +2995,14 @@ int send_data_from_ioa_socket_nbh(ioa_socket_handle s, ioa_addr* dest_addr,
 
 						if (!(s->tobeclosed)) {
 
-	printf("DEBUG %s, %d \n", __FUNCTION__, __LINE__);
 							ret = (int) ioa_network_buffer_get_size(nbh);
 
 							if (!tcp_congestion_control || is_socket_writeable(
 									s, (size_t) ret, __FUNCTION__, 2)) {
-	printf("DEBUG %s, %d \n", __FUNCTION__, __LINE__);
 								s->in_write = 1;
 								if (bufferevent_write(s->bev,
 										ioa_network_buffer_data(nbh),
 										ioa_network_buffer_get_size(nbh)) < 0) {
-	printf("DEBUG %s, %d \n", __FUNCTION__, __LINE__);
 									ret = -1;
 									perror("bufev send");
 									log_socket_event(
@@ -3054,12 +3015,10 @@ int send_data_from_ioa_socket_nbh(ioa_socket_handle s, ioa_addr* dest_addr,
 								s->in_write = 0;
 							} else {
 								//drop the packet
-	printf("DEBUG %s, %d \n", __FUNCTION__, __LINE__);
 								;
 							}
 						}
 					} else if (s->ssl) {
-	printf("DEBUG %s, %d \n", __FUNCTION__, __LINE__);
 						send_ssl_backlog_buffers(s);
 						ret = ssl_send(
 								s,
@@ -3073,24 +3032,18 @@ int send_data_from_ioa_socket_nbh(ioa_socket_handle s, ioa_addr* dest_addr,
 									&(s->bufs),
 									(s08bits*) ioa_network_buffer_data(nbh),
 									ioa_network_buffer_get_size(nbh));
-	printf("DEBUG %s, %d \n", __FUNCTION__, __LINE__);
 					} else if (s->fd >= 0) {
 
-	printf("DEBUG %s, %d \n", __FUNCTION__, __LINE__);
 						if (s->connected && !(s->parent_s)) {
-	printf("DEBUG %s, %d \n", __FUNCTION__, __LINE__);
 							dest_addr = NULL; /* ignore dest_addr */
 						} else if (!dest_addr) {
-	printf("DEBUG %s, %d \n", __FUNCTION__, __LINE__);
 							dest_addr = &(s->remote_addr);
 						}
 
-	printf("DEBUG %s, %d \n", __FUNCTION__, __LINE__);
 						ret = udp_send(s,
 									dest_addr,
 									(s08bits*) ioa_network_buffer_data(nbh),ioa_network_buffer_get_size(nbh));
 						if (ret < 0) {
-	printf("DEBUG %s, %d \n", __FUNCTION__, __LINE__);
 							s->tobeclosed = 1;
 #if defined(EADDRNOTAVAIL)
 							int perr=errno;
@@ -3114,9 +3067,7 @@ int send_data_from_ioa_socket_nbh(ioa_socket_handle s, ioa_addr* dest_addr,
 		}
 	}
 
-	printf("DEBUG %s, %d \n", __FUNCTION__, __LINE__);
 	ioa_network_buffer_delete(s->e, nbh);
-	printf("DEBUG %s, %d \n", __FUNCTION__, __LINE__);
 
 	return ret;
 }
