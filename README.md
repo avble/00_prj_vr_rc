@@ -19,11 +19,11 @@ $./client server port userid
 
 
 
-4. pjnath client 
+4. pjnath client  (obsoleted) 
+Migrate code to https://github.com/avble/natClientEx
 usage:
 ./pjnath_demo 
 -i: id of a user 
--
 
 cmd: 
 list: list up all user on signalling server 
