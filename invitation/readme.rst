@@ -2,6 +2,8 @@ Invitation
 =========
 This server is to allow a mobile device (owner) to share its right of accessing home router to another mobile device
 
+![image](https://user-images.githubusercontent.com/5534923/83938639-826efe80-a800-11ea-9136-efb27b903dbd.png)
+
 
 Development
 -----------
